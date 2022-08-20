@@ -1,26 +1,105 @@
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import axios from "axios";
 import './css/common.css';
+import Notiflix from 'notiflix';
+import axios from "axios";
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
+
 
 const refs = {
-    formEl: document.querySelector('#search-form'),
-    inputEl: document.querySelector('input'),
-    buttonSearchEl: document.querySelector('button-search'),
-    buttonLoadEl: document.querySelector('.button-load'),
-    galleryEl: document.querySelector('.gallery'),
+input: document.querySelector('input'),
+form: document.querySelector('.search-form'),
+buttonLoad: document.querySelector('.load-more'),
+buttonSearchEl: document.querySelector('.search'),
+gallery: document.querySelector('.gallery'),
+alert: document.querySelector('.alert')
 }
-
-refs.buttonLoadEl.classList.add('invisible');
 
 const BASE_URL = "https://pixabay.com/api/";
 
-const key = '29365633-60606ea12614ba8c3cfb381aa';
-const nameSearch = refs.inputEl.value;
+refs.form.addEventListener('submit', (onFormSubmit));
+refs.buttonLoad.addEventListener('click', (onLoadMoreBtn))
+
+let isAlertVisible = false;
+let nameSearch = refs.input.value;
+let lightbox;
 let currentPage = 1;
 let perPage = 40;
 const totalPages = 500 / perPage;
+console.log(totalPages);
 
-// fetch(`${BASE_URL}?key=${key}&q=${nameSearch}&image_type=photo&orientation=horizontal&safesearch=true&page=${currentPage}&per_page=${perPage}`);
+
+refs.buttonLoad.classList.add('invisible');
+
+
+
+async function fetchImages() {
+    try {
+        const response = await axios.get(`${BASE_URL}?key=29365633-60606ea12614ba8c3cfb381aa&image_type=photo&orientation=horizontal&safesearch=true&q=${nameSearch}&page=${currentPage}&per_page=${perPage}`);
+         const arrayImages = await response.data.hits;
+
+        if(arrayImages.length === 0) {
+            Notiflix.Notify.warning(
+            "Sorry, there are no images matching your search query. Please try again.")
+        } else if(arrayImages.length !== 0) {
+            refs.buttonLoad.classList.remove('invisible')
+        }
+        return {arrayImages,
+            totalHits: response.data.totalHits,}       
+        
+    } catch(error) {
+        console.log(error)
+    }
+}
+
+    
+function onFormSubmit(e) {    
+e.preventDefault()
+
+  refs.gallery.innerHTML = '';
+  nameSearch = refs.input.value;
+  nameSearch;
+  refs.buttonLoad.classList.add('invisible')
+
+
+  if(nameSearch === ''){
+    Notiflix.Notify.warning(
+      "Sorry, there are no images matching your search query. Please try again.")
+      return
+  }
+
+  
+
+
+  fetchImages() 
+    .then(images => {
+      insertMarkup(images);
+      currentPage += 1;
+    }).catch(error => (console.log(error)))
+
+ 
+    lightbox = new SimpleLightbox('.gallery a', {
+        captionsData: 'alt',
+        captionPosition: 'bottom',
+        captionDelay: 250,
+    });
+}
+
+
+function onLoadMoreBtn(){
+    if (currentPage > totalPages) {
+        refs.buttonLoad.classList.add('invisible');
+        return toggleAlertPopup()
+    }
+
+    nameSearch = refs.input.value;
+
+    fetchImages() 
+    .then(images => {
+      insertMarkup(images);   
+      currentPage += 1;})
+    .catch(error => (console.log(error)))
+}
+
 
 const createMarkup = img => `
   <div class="photo-card">
@@ -44,3 +123,31 @@ const createMarkup = img => `
     </div>
 `; 
 
+
+function generateMarkup(  { arrayImages, totalHits }) {
+    if (currentPage === 1) {
+        Notiflix.Notify.success(`Hoooray! We found ${totalHits} images!`);
+    }
+    return arrayImages.reduce((acc, img) => acc + createMarkup(img), "") 
+};
+
+
+function insertMarkup(arrayImages) {
+    const result = generateMarkup(arrayImages);   
+    refs.gallery.insertAdjacentHTML('beforeend', result);
+
+ lightbox.refresh();
+};
+
+
+function toggleAlertPopup() {
+    if (isAlertVisible) {
+      return;
+    }
+    isAlertVisible = true;
+    refs.alert.classList.add("is-visible");
+    setTimeout(() => {
+      refs.alert.classList.remove("is-visible");
+      isAlertVisible = false;
+    }, 3000);
+};
