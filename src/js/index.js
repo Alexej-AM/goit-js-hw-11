@@ -31,7 +31,8 @@ e.preventDefault()
 refs.buttonLoad.classList.add('ishidden');
 
 searchName = e.currentTarget.elements.searchQuery.value.trim();
-if (searchName === 0 ) {
+if (searchName === '' ) {
+  Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
   return;
 } else {
 clearGalleryList();
@@ -103,7 +104,7 @@ function  createMarkup (img) {
   return `
   <div class="photo-card">
          <a href="${img.largeImageURL}" class="gallery_link">
-          <img class="gallery__image" src="${img.webformatURL}" alt="${img.tags}" width="370px" loading="lazy" />
+          <img class="gallery__image" src="${img.webformatURL}" alt="${img.tags}" width="370px" height="200px" loading="lazy" />
           </a>
         <div class="info">
               <p class="info-item">

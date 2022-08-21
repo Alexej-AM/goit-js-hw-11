@@ -7,7 +7,7 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgb(201, 221, 221);
+  background-color: white;
   color: #212121;
   line-height: 1.5;
 }
@@ -21,11 +21,17 @@ body {
   width: 100%;
   justify-content: center;
   padding: 10px 0px;
-  background-color: #1a2dcc;
+  background-color: #000608;
+}
+
+.icon-search{
+  fill:white;
+  stroke: rgb(3, 217, 255);
 }
 
 .search-form input{
-  font-size: 25px;
+  border: 1px rgb(3, 217, 255) solid;
+  font-size: 15px;
   padding: 5px 10px;
 }
 .wrapper{
@@ -50,16 +56,18 @@ body {
 .photo-card{
   margin-right: 20px;
   margin-bottom: 20px;
-  box-shadow: -4px 6px 37px 3px rgba(74, 152, 158, 1);
-  border-radius: 4px;
+  /* border-radius: 4px;  */
   
 }
-.photo-card:nth-child(4n){
+.photo-card:nth-child(3n){
   margin-right: 0;
 }
+
+
 .photo-card img {
   display: block;
   object-fit: cover;
+  height: 240px;
   
 }
 
@@ -67,7 +75,7 @@ body {
   display: flex;
   justify-content: center;
   padding: 10px 5px;
-  border: 1px solid rgb(26, 82, 155);
+  border: 1px solid rgb(10, 170, 245);
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
   border-top: transparent;
@@ -87,13 +95,14 @@ display: block;
   margin-right: auto;
   margin-left: auto;
     
-  padding: 10px 20px;
+  padding: 5px 10px;
 
   border: transparent;
   border-radius: 4px;
   background-color: transparent;
-  box-shadow: -4px 6px 37px 3px rgba(74, 152, 158, 1);
+  background-color: rgb(10, 170, 245);
   cursor: pointer;
+  color: white;
 }
 .load-more:hover{
   background-color: #6876f3;
